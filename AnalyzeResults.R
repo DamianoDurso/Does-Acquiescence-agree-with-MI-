@@ -12,7 +12,7 @@ scale <- c('balanced','semi-balanced','unbalanced')
 nitems <- c(12, 24)
 Nfac <- c(1,2)
 ARS <- c(0,.3,.6)
-
+#test
 Simulation <- expand.grid(sample = samplesize, 
                           scale = scale, 
                           j = nitems, 
