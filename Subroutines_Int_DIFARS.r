@@ -1,15 +1,4 @@
-#test values
-#Nfac <- 1
-#seed <- 090493
-#DIF <- F
-#DIFsize <- 0
-#sample <- 250
-#nitems <- 12
-#cat <- 3
-#ARS <- 0
-#nrep <- 1
-#scale <- "balanced"
-#######################################################################################################
+####################################################################################################### 
 #
 #
 #                                          Functions file                 
@@ -50,7 +39,8 @@ Cuts_Data <- function(x,thresh){
 
 
 ################################################# Data Generation ##########################################
-GenSimulationStudy <- function(seed, Nfac, DIF, DIFsizeload, DIFsizeThr, sample, scale, nitems, cat, ARS, nrep){
+
+GenSimulationStudywithDIF <- function(seed, Nfac, DIF, DIFsizeload, DIFsizeThr, sample, scale, nitems, cat, ARS, nrep, DIFARS){
 
   
 #Generate parameters G1
@@ -65,23 +55,63 @@ GenSimulationStudy <- function(seed, Nfac, DIF, DIFsizeload, DIFsizeThr, sample,
         } else {
         a <- matrix(c(rep(.6,nitems/2), rep(-.6,nitems/2)), ncol = 1, nrow = nitems)
         a[7:8,] <- .6
-      }
-      
+      }      
     }  else {
       if(scale == "balanced"){
         a <- matrix(c(rep(.6,nitems/2), rep(-.6, nitems/2), 
                       rep(ARS,nitems)), 
                     ncol = 2, nrow = nitems)
+        if(DIFARS == T){
+        if(ARS == .3){
+        a[1:c(((nitems/2))),dim(a)[2]] <- 0.1715266
+        a[c(((nitems/2)+1)):nitems,dim(a)[2]] <- 0.4288165
+        } else {
+        a[1:c(((nitems/2))),dim(a)[2]] <- 0.4716981
+        a[c(((nitems/2)+1)):nitems,dim(a)[2]] <- 0.728988
+        }
+        }                     
       } else if (scale == "unbalanced") {
             a <- matrix(c(rep(.6,nitems/2), rep(.6, nitems/2), 
                       rep(ARS,nitems)), 
                     ncol = 2, nrow = nitems)
-        
+        if(DIFARS == T){
+        if(ARS == .3){
+        a[1:c(((nitems/2)+1)),dim(a)[2]] <- 0.1715266
+        a[c(((nitems/2)+1)):nitems,dim(a)[2]] <- 0.4288165
+        } else {
+        a[1:c(((nitems/2)+1)),dim(a)[2]] <- 0.4716981
+        a[c(((nitems/2)+1)):nitems,dim(a)[2]] <- 0.728988
+        }
+        } else { NULL}           
       } else  {
         a <- matrix(c(rep(.6,nitems/2), rep(-.6, nitems/2), 
                       rep(ARS,nitems)), 
                     ncol = 2, nrow = nitems)
+        if(nitems == 12){
         a[7:8,1] <- .6
+        } else {           
+        a[13:16,1] <- .6
+        }
+        if(DIFARS == T){
+        if(nitems == 12){
+          if(ARS == .3){
+          a[1:c((nitems/2)+2),dim(a)[2]] <- 0.1715266
+          a[c(((nitems/2)+3):nitems),dim(a)[2]] <- 0.4288165  
+          } else {
+          a[1:c((nitems/2)+2),dim(a)[2]] <- 0.5145798 
+          a[c(((nitems/2)+3):nitems),dim(a)[2]] <- 0.7718696  
+          }
+        } else {
+          if(ARS == .3){
+          a[1:c((nitems/2)+4),dim(a)[2]] <- 0.1715266  
+          a[c(((nitems/2)+5):nitems),dim(a)[2]] <- 0.4288165
+          } else {
+          a[1:c((nitems/2)+4),dim(a)[2]] <- 0.5145798  
+          a[c(((nitems/2)+5):nitems),dim(a)[2]] <- 0.7718696
+        }
+
+        }                    
+      }
       }
     }
     
@@ -123,36 +153,87 @@ GenSimulationStudy <- function(seed, Nfac, DIF, DIFsizeload, DIFsizeThr, sample,
       if(scale == "balanced"){
         a <- matrix(c(rep(c(.6,0,-.6,0),3), rep(c(0,.6,0,-.6),3), rep(ARS, nitems)),
                     ncol=3)
+        if(DIFARS == T){
+          if(ARS == .3){
+        a[c(1,5,9,2,6,10), ncol(a)] <-  0.1715266
+        a[c(3,7,11,4,8,12), ncol(a)] <-  0.4288165
+          } else {
+        a[c(1,5,9,2,6,10), ncol(a)] <-  0.4716981
+        a[c(3,7,11,4,8,12), ncol(a)] <-  0.728988
+          }
+        } 
       } else if (scale == "unbalanced"){
         a <- matrix(c(rep(c(.6,0,.6,0),3), rep(c(0,.6,0,.6),3), rep(ARS, nitems)),
-                    ncol=3)
-        
+           ncol=3)        
+        if(DIFARS == T){
+          if(ARS == .3){
+        a[c(1,5,9,2,6,10), ncol(a)] <-  0.1715266
+        a[c(3,7,11,4,8,12), ncol(a)] <-  0.4288165
+          } else {
+        a[c(1,5,9,2,6,10), ncol(a)] <-  0.4716981
+        a[c(3,7,11,4,8,12), ncol(a)] <-  0.728988
+          }
+        } 
       } else {
         a <- matrix(c(rep(c(.6,0,-.6,0),3), rep(c(0,.6,0,-.6),3), rep(ARS, nitems)),
                     ncol=3)
         a[3,1] <- .6
         a[4,2] <- .6
-      }
-      
+        if(DIFARS == T){
+          if(ARS == .3){
+        a[c(1,3,5,9,2,4,6,10), ncol(a)] <-  0.1715266
+        a[c(7,11,8,12), ncol(a)] <-  0.4288165
+          } else {
+        a[c(1,5,9,2,6,10), ncol(a)] <-  0.5145798
+        a[c(3,7,11,4,8,12), ncol(a)] <-  0.7718696
+          }
+        } 
+        }
     } else {
       if(scale == "balanced"){
         a <- matrix(c(rep(c(.6,0,-.6,0),6), rep(c(0,.6,0,-.6),6), rep(ARS, nitems)), 
                     ncol=3)
+        if(DIFARS == T){
+          if(ARS == .3){
+        a[c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.1715266
+        a[-c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.4288165
+          } else {
+        a[c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.4716981
+        a[-c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.728988
+          }
+        } 
       } else if (scale == "unbalanced") {
         a <- matrix(c(rep(c(.6,0,.6,0),6), rep(c(0,.6,0,.6),6), rep(ARS, nitems)), 
                     ncol=3)
+        if(DIFARS == T){
+          if(ARS == .3){
+        a[c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.1715266
+        a[-c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.4288165
+          } else {
+        a[c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.4716981
+        a[-c(1,5,9,13,17,21,2,6,10,14,18,22), ncol(a)] <-  0.728988
+          }
+        } 
         
       } else {
         a <- matrix(c(rep(c(.6,0,-.6,0),6), rep(c(0,.6,0,-.6),6), rep(ARS, nitems)), 
                     ncol=3)
         a[c(3,15),1] <- .6
         a[c(4,16),2] <- .6
+        if(DIFARS == T){
+          if(ARS == .3){
+        a[c(1,3,5,9,13,15,17,21,2,4,6,10,14,16,18,22), ncol(a)] <-  0.1715266
+        a[-c(1,3,5,9,13,15,17,21,2,4,6,10,14,16,18,22), ncol(a)] <-  0.4288165
+          } else {
+        a[c(1,3,5,9,13,15,17,21,2,4,6,10,14,16,18,22), ncol(a)] <-  0.5145798
+        a[-c(1,3,5,9,13,15,17,21,2,4,6,10,14,16,18,22), ncol(a)] <-  0.7718696
+          }
+        } 
       }
     }  
   }
 }  
 
-  
 
 
 # Generate thresholds
@@ -405,7 +486,7 @@ names(results) <- c('Data', "loadingsG1", "loadingsG2", "thresholdsG1", "thresho
 
 return(results)
 }
-  
+    
   
 ##-------------------------------------------------------------------------------------------------------##  
 
@@ -5973,7 +6054,7 @@ F2 ~~ c(0, 0)*ARS + c(psi.3_2.g1, psi.3_2.g2)*ARS
   return(results)
 }
 
-Estimate.MI.Models <- function(Data, Models){
+Estimate.MI.Models.ARS <- function(Data, Models){
   
   
   
@@ -6069,7 +6150,6 @@ Estimate.MI.Models <- function(Data, Models){
     }
   }
   
-  
 #  Results.fit[[1]] <- fitmeasures(fit.conf$value)
 #  Results.fit[[2]] <- fitmeasures(fit.thr$value)
 #  Results.fit[[3]] <- fitmeasures(fit.load$value)
@@ -6080,8 +6160,8 @@ Estimate.MI.Models <- function(Data, Models){
   names(Results.fit) <- c('Conf.fit', 'Thr.fit', 'Load.fit', "Int.fit",
                           'Conf.fitARS', 'Thr.fitARS', 'Load.fitARS', 'Int.fitARS')
   names(Results.alpha) <- c('Conf.fit', 'Thr.fit', 'Load.fit', "Int.fit",
-                            'Conf.fitARS', 'Thr.fitARS', 'Load.fitARS', 'Int.fitARS')
-  
+                          'Conf.fitARS', 'Thr.fitARS', 'Load.fitARS', 'Int.fitARS')
+
 
 #LavtestLRT and differential fit measures results  
   Comparative.fit <- list()
@@ -6122,12 +6202,13 @@ Estimate.MI.Models <- function(Data, Models){
   names(Comparative.fit) <- c("NoARSModels", "ARSModels", "ARSvsNoArs")
   
   results <- list()
-  #  results[[1]] <- Models
+#  results[[1]] <- Models
   results[[2]] <- Results.fit
   results[[3]] <- Comparative.fit
   results[[4]] <- Results.alpha
   
   names(results) <- c("Models.fit", "fit.measures", "Comparative.fit", "alphas")
+  return(results)
 }
 
 Model_Creation.item <- function(Nfac, nitems, cat){
@@ -8053,9 +8134,4 @@ Estimate.MI.Models.item <- function(Data, Models.item, Nfac, nitems){
   
   return(results)
 }
-
-
-
-
-
 

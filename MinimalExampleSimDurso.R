@@ -12,7 +12,7 @@ library(semTools)
 library(MASS)
 library(tictoc)
 
-source("Subroutines.R")
+source("230607-Subroutines_Int_DIFARS.r")
 
 #Factors simulation study
 samplesize <- c(250,1000)
@@ -21,20 +21,25 @@ scale <- c('balanced','semi-balanced','unbalanced')
 nitems <- c(12, 24)
 Nfac <- c(1,2)
 ARS <- c(0,.3,.6)
+DIFARS <- c(T, F)
 
 Simulation <- expand.grid(sample = samplesize, 
                           scale = scale, 
                           j = nitems, 
                           c = categories,
                           ARS = ARS,
-                          Nfac = Nfac
+                          Nfac = Nfac,
+                          DIFARS = DIFARS
 )
+
 simdes <- cbind.data.frame(seed=c((200802):(200801+nrow(Simulation))),Simulation) 
 
-i <- 29
-SimulatedSet <- GenSimulationStudy(seed = simdes$seed[i], 
+i <- 30
+simdes[i,]
+SimulatedSet <- GenSimulationStudywithDIF(seed = simdes$seed[i], 
                                    Nfac = simdes$Nfac[i], 
-                                   DIF = 0, 
+                                   DIF = 0,
+                                   DIFARS = simdes$DIFARS[i], 
                                    DIFsizeload = 0, 
                                    DIFsizeThr = 0, 
                                    sample = simdes$sample[i], 
@@ -42,11 +47,11 @@ SimulatedSet <- GenSimulationStudy(seed = simdes$seed[i],
                                    nitems = simdes$j[i],
                                    cat = simdes$c[i], 
                                    ARS = simdes$ARS[i], 
-                                   nrep = 400)
+                                   nrep = 150)
 length(SimulatedSet$Data)
 SimulatedSet$loadingsG2
 SimulatedSet$thresholdsG2
-Data <- SimulatedSet$Data[[5]]
+Data <- SimulatedSet$Data[[98]]
 #lavInspect(aba$Mod.Conf, what = "thresholds")
 
 #Create CCFA scale-level Models 
@@ -61,17 +66,23 @@ Models.item <- Model_Creation.item(Nfac = simdes$Nfac[i],
 
 #Estimate CCFA models
 tic()
-aba <-  Estimate.MI.Models(Data = SimulatedSet$Data[[3]],
+aba <-  Estimate.MI.Models.ARS(Data = SimulatedSet$Data[[1]],
                           Models = Models.scale)
 toc()
 
-summary(aba$Models.fit$Mod.ConfARS$value)
-summary(aba$Models.fit$Mod.Conf$value)
-modindices(aba$Models.fit$Mod.Conf$value, sort = T)
-lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`1`$theta
-lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`2`$theta
+aba$alphas$Int.fit[[2]]
+aba$alphas$Int.fitARS[[2]]
 
-lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`2`$lambda
+#modindices(aba$Models.fit$Mod.Conf$value, sort = T)
+#lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`1`$theta
+#lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`2`$theta
+lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`1`$alpha
+lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`2`$alpha
+
+lavInspect(aba$Models.fit$Mod.ThrARS$value, "std")$`1`$alpha
+lavInspect(aba$Models.fit$Mod.ThrARS$value, "std")$`2`$alpha
+
+#lavInspect(aba$Models.fit$Mod.Conf$value, "std")$`2`$lambda
 
 
 tic()
